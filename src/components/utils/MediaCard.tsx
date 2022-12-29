@@ -12,7 +12,7 @@ interface Props {
 
 const MediaCard: React.FC<Props> = ({ image, name, description }) => {
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 360 }}>
       <CardMedia sx={{ height:  300}} image={image} />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
