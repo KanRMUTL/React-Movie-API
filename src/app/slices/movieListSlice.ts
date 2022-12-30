@@ -1,9 +1,26 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { apiBaseUrl, token } from "../../constance/service";
-import { Movie } from "../../type/movie";
+import { apiBaseUrl, token, backdropUrl } from "../../constance/service";
+import { Movie, MovieResponse } from "../../type/movie";
 
-const initialState: Movie[] = [];
+export const fetchMovieList = createAsyncThunk("movieList/fetch", async () => {
+  const url = `${apiBaseUrl}/movie/popular`;
+  const result = await axios.get<MovieResponse>(url, {
+    params: {
+      api_key: token,
+    },
+  });
+  return result.data;
+});
+
+interface MovieStore {
+  type: string;
+  list: Movie[];
+}
+const initialState: MovieStore = {
+  type: "",
+  list: [],
+};
 
 const movieListSlice = createSlice({
   name: "movieList",
@@ -11,16 +28,17 @@ const movieListSlice = createSlice({
   reducers: {
     setMovieList: (state, { payload }) => (state = payload),
   },
-});
-
-export const fetchMovieList = createAsyncThunk("movieList/fetch", async () => {
-  const url = `${apiBaseUrl}/movie/popular`;
-  const result = await axios.get<any>(url, {
-    params: {
-      api_key: token,
-    },
-  });
-  return result.data.results;
+  extraReducers: (builder) => {
+    builder.addCase(fetchMovieList.fulfilled, (state, action) => {
+      action.payload.results.forEach((item: any) => {
+        state.list.push({
+          name: item.title,
+          description: item.overview,
+          imageUrl: `${backdropUrl}/${item.backdrop_path}`,
+        });
+      });
+    });
+  },
 });
 
 export const { setMovieList } = movieListSlice.actions;
