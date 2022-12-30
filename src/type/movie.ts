@@ -27,3 +27,10 @@ export interface MovieResult {
   vote_average: number;
   vote_count: number;
 }
+
+export enum MovieTypes {
+  now_playing = "now_playing",
+  popular = "popular",
+  top_rated = "top_rated",
+  upcoming = "upcoming",
+}

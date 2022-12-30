@@ -1,29 +1,33 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { apiBaseUrl, token, backdropUrl } from "../../constance/service";
-import { Movie, MovieResponse } from "../../type/movie";
-
-export const fetchMovieList = createAsyncThunk("movieList/fetch", async () => {
-  const url = `${apiBaseUrl}/movie/popular`;
-  const result = await axios.get<MovieResponse>(url, {
-    params: {
-      api_key: token,
-    },
-  });
-  return result.data;
-});
+import { Movie, MovieResponse, MovieTypes } from "../../type/movie";
 
 interface MovieStore {
-  type: string;
+  currentType: MovieTypes;
   list: Movie[];
 }
+
+export const fetchMovieList = createAsyncThunk(
+  "movie/fetch",
+  async (movieType: MovieTypes) => {
+    const url = `${apiBaseUrl}/movie/${movieType}`;
+    const result = await axios.get<MovieResponse>(url, {
+      params: {
+        api_key: token,
+      },
+    });
+    return result.data;
+  }
+);
+
 const initialState: MovieStore = {
-  type: "",
+  currentType: MovieTypes.now_playing,
   list: [],
 };
 
 const movieListSlice = createSlice({
-  name: "movieList",
+  name: "movie",
   initialState: initialState,
   reducers: {
     setMovieList: (state, { payload }) => (state = payload),
