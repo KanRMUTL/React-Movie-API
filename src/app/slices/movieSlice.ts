@@ -30,12 +30,17 @@ const movieListSlice = createSlice({
   name: "movie",
   initialState: initialState,
   reducers: {
-    setMovieList: (state, { payload }) => (state = payload),
+    setMovieType: (movie, { payload }) => {
+      movie.currentType = payload;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchMovieList.fulfilled, (state, action) => {
+    builder.addCase(fetchMovieList.pending, (movie, action) => {
+      movie.list = [];
+    });
+    builder.addCase(fetchMovieList.fulfilled, (movie, action) => {
       action.payload.results.forEach((item: any) => {
-        state.list.push({
+        movie.list.push({
           name: item.title,
           description: item.overview,
           imageUrl: `${backdropUrl}/${item.backdrop_path}`,
@@ -45,6 +50,6 @@ const movieListSlice = createSlice({
   },
 });
 
-export const { setMovieList } = movieListSlice.actions;
+export const { setMovieType } = movieListSlice.actions;
 
 export default movieListSlice.reducer;
