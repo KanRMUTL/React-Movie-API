@@ -8,6 +8,7 @@ import { fetchMovieList, setMovieType } from "../../../app/slices/movieSlice";
 import { store } from "../../../app/store";
 import RowRadioButtonsGroup from "../../utils/RadioGroup";
 import { MovieTypes } from "../../../type/movie";
+import BackDrop from "../../utils/BackDrop";
 
 const menu = [
   { label: "Popular", value: MovieTypes.popular },
@@ -35,6 +36,7 @@ function Movies() {
     <Box>
       <RowRadioButtonsGroup
         onChnge={handleTypeChange}
+        selectedValue={movie.currentType}
         label="Type"
         menu={menu}
       />
@@ -45,6 +47,7 @@ function Movies() {
           </Grid>
         ))}
       </Grid>
+      <BackDrop open={movie.loading} />
     </Box>
   );
 }

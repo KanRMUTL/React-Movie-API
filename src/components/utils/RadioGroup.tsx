@@ -13,9 +13,10 @@ interface RadioType {
 interface Props {
   label: string;
   menu: RadioType[];
+  selectedValue: string
   onChnge: (e: ChangeEvent<HTMLInputElement>) => void;
 }
-const RowRadioButtonsGroup: FC<Props> = ({ label, menu, onChnge }) => {
+const RowRadioButtonsGroup: FC<Props> = ({ label, menu, selectedValue , onChnge }) => {
   return (
     <FormControl>
       <FormLabel id="demo-row-radio-buttons-group-label">{label}</FormLabel>
@@ -31,6 +32,7 @@ const RowRadioButtonsGroup: FC<Props> = ({ label, menu, onChnge }) => {
             value={value}
             control={<Radio />}
             label={label}
+            checked={value === selectedValue }
           />
         ))}
       </RadioGroup>

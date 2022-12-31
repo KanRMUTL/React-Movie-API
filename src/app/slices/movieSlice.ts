@@ -6,6 +6,7 @@ import { Movie, MovieResponse, MovieTypes } from "../../type/movie";
 interface MovieStore {
   currentType: MovieTypes;
   list: Movie[];
+  loading: boolean;
 }
 
 export const fetchMovieList = createAsyncThunk(
@@ -18,8 +19,9 @@ export const fetchMovieList = createAsyncThunk(
 );
 
 const initialState: MovieStore = {
-  currentType: MovieTypes.now_playing,
+  currentType: MovieTypes.top_rated,
   list: [],
+  loading: false,
 };
 
 const movieListSlice = createSlice({
@@ -33,6 +35,7 @@ const movieListSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchMovieList.pending, (movie, action) => {
       movie.list = [];
+      movie.loading = true;
     });
     builder.addCase(fetchMovieList.fulfilled, (movie, action) => {
       action.payload.results.forEach((item: any) => {
@@ -42,6 +45,11 @@ const movieListSlice = createSlice({
           imageUrl: `${backdropUrl}/${item.backdrop_path}`,
         });
       });
+      movie.loading = false;
+    });
+    builder.addCase(fetchMovieList.rejected, (movie, action) => {
+      movie.list = [];
+      movie.loading = false;
     });
   },
 });
