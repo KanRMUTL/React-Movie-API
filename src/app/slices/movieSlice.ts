@@ -67,7 +67,10 @@ const movieListSlice = createSlice({
       movie.loading = true;
     });
     builder.addCase(fetchMovieDetail.fulfilled, (movie, action) => {
-      movie.selected = action.payload;
+      movie.selected = {
+        ...action.payload,
+        backdrop_path: `${backdropUrl}/${action.payload.backdrop_path}`,
+      };
       movie.loading = false;
     });
     builder.addCase(fetchMovieDetail.rejected, (movie, action) => {

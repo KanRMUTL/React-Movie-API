@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import type { RootState } from "../../../app/store";
 import { useSelector } from "react-redux";
-import { Box } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 import { fetchMovieDetail } from "../../../app/slices/movieSlice";
 import { store } from "../../../app/store";
@@ -22,6 +22,26 @@ function MovieDetail() {
 
   return (
     <Box>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Grid item>
+          <Typography variant="h5">{movie.selected.title}</Typography>
+        </Grid>
+        <Grid container direction="row" justifyContent="center" mt={2} mb={2}>
+          <img
+            style={{ width: "70%" }}
+            src={movie.selected.backdrop_path}
+            alt="movie backdrop"
+          />
+        </Grid>
+        <Grid item>
+          <Typography>{movie.selected.overview}</Typography>
+        </Grid>
+      </Grid>
       <BackDrop open={movie.loading} />
     </Box>
   );

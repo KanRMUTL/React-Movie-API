@@ -48,7 +48,12 @@ function Movies() {
         label="Type"
         menu={menu}
       />
-      <Grid container spacing={2}>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        spacing={2}
+      >
         {movie.list.map(({ id, name, imageUrl, description }) => (
           <Grid item key={uniqid()} style={{ cursor: "pointer" }}>
             <MediaCard
