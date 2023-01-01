@@ -4,11 +4,16 @@ import type { RootState } from "../../../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
 import uniqid from "uniqid";
-import { fetchMovieList, setMovieType } from "../../../app/slices/movieSlice";
+import {
+  fetchMovieDetail,
+  fetchMovieList,
+  setMovieType,
+} from "../../../app/slices/movieSlice";
 import { store } from "../../../app/store";
 import RowRadioButtonsGroup from "../../utils/RadioGroup";
-import { MovieTypes } from "../../../type/movie";
+import { Movie, MovieTypes } from "../../../type/movie";
 import BackDrop from "../../utils/BackDrop";
+import { useNavigate } from "react-router-dom";
 
 const menu = [
   { label: "Popular", value: MovieTypes.popular },
@@ -20,6 +25,7 @@ const menu = [
 function Movies() {
   const movie = useSelector((state: RootState) => state.movie);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => fetchData(), []);
 
@@ -32,6 +38,8 @@ function Movies() {
     store.dispatch(fetchMovieList(e.target.value as MovieTypes));
   };
 
+  const handleClickMovie = (id: number) => navigate(`${id}`);
+
   return (
     <Box>
       <RowRadioButtonsGroup
@@ -41,9 +49,14 @@ function Movies() {
         menu={menu}
       />
       <Grid container spacing={2}>
-        {movie.list.map(({ name, imageUrl, description }: any) => (
-          <Grid item key={uniqid()}>
-            <MediaCard image={imageUrl} name={name} description={description} />
+        {movie.list.map(({ id, name, imageUrl, description }) => (
+          <Grid item key={uniqid()} style={{ cursor: "pointer" }}>
+            <MediaCard
+              onClick={() => handleClickMovie(id)}
+              image={imageUrl}
+              name={name}
+              description={description}
+            />
           </Grid>
         ))}
       </Grid>

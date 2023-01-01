@@ -8,12 +8,13 @@ interface Props {
   image: string;
   name: string;
   description: string;
+  onClick: () => void;
 }
 
-const MediaCard: React.FC<Props> = ({ image, name, description }) => {
+const MediaCard: React.FC<Props> = ({ image, name, description, onClick }) => {
   return (
-    <Card sx={{ maxWidth: 360 }}>
-      <CardMedia sx={{ height:  300}} image={image} />
+    <Card sx={{ maxWidth: 360 }} onClick={onClick}>
+      <CardMedia sx={{ height: 300 }} image={image} />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {name}

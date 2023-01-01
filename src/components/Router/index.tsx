@@ -3,6 +3,7 @@ import path from "../../constance/path";
 import Container from "../layouts/Container";
 import Home from "../pages/Home";
 import Movies from '../pages/Movies'
+import MovieDetail from "../pages/MovieDetail";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
         path: path.movies,
         element: <Movies/>,
       },
+      {
+        path: path.movieDetail,
+        element: <MovieDetail />
+      }
     ],
   },
 ]);
