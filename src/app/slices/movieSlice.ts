@@ -1,26 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { client } from "../services/client";
 import { backdropUrl } from "../../constance/service";
-import { Movie, MovieResponse, MovieTypes } from "../../type/movie";
-
+import { Movie, MovieDetail, MovieTypes } from "../../type/movie";
+import MovieClass from "../classes/Movie";
 interface MovieStore {
   currentType: MovieTypes;
   list: Movie[];
+  selected: MovieDetail;
   loading: boolean;
 }
 
 export const fetchMovieList = createAsyncThunk(
-  "movie/fetch",
-  async (movieType: MovieTypes) => {
-    const url = `/movie/${movieType}`;
-    const result = await client.get<MovieResponse>(url);
-    return result.data;
+  "movie/getList",
+  async (type: MovieTypes) => {
+    const movie = new MovieClass("movie");
+    return movie.getList(type);
+  }
+);
+
+export const fetchMovieDetail = createAsyncThunk(
+  "movie/getDetail",
+  async (id: number) => {
+    const movie = new MovieClass("movie");
+    return movie.getDetail(id);
   }
 );
 
 const initialState: MovieStore = {
   currentType: MovieTypes.top_rated,
   list: [],
+  selected: {} as MovieDetail,
   loading: false,
 };
 
@@ -38,16 +46,31 @@ const movieListSlice = createSlice({
       movie.loading = true;
     });
     builder.addCase(fetchMovieList.fulfilled, (movie, action) => {
-      action.payload.results.forEach((item: any) => {
-        movie.list.push({
-          name: item.title,
-          description: item.overview,
-          imageUrl: `${backdropUrl}/${item.backdrop_path}`,
-        });
-      });
+      action.payload.results.forEach(
+        ({ id, title, overview, backdrop_path }) => {
+          movie.list.push({
+            id,
+            name: title,
+            description: overview,
+            imageUrl: `${backdropUrl}/${backdrop_path}`,
+          });
+        }
+      );
       movie.loading = false;
     });
     builder.addCase(fetchMovieList.rejected, (movie, action) => {
+      movie.list = [];
+      movie.loading = false;
+    });
+    builder.addCase(fetchMovieDetail.pending, (movie, action) => {
+      movie.selected = initialState.selected;
+      movie.loading = true;
+    });
+    builder.addCase(fetchMovieDetail.fulfilled, (movie, action) => {
+      movie.selected = action.payload;
+      movie.loading = false;
+    });
+    builder.addCase(fetchMovieDetail.rejected, (movie, action) => {
       movie.list = [];
       movie.loading = false;
     });
