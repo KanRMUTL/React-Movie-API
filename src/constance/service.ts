@@ -1,3 +1,3 @@
-export const apiBaseUrl = 'https://api.themoviedb.org/3'
+export const apiBaseUrl = process.env.REACT_APP_API_URL
 export const backdropUrl ='https://image.tmdb.org/t/p/original'
-export const token = 'e13394375a09fbd46812b9a5d6e44045'
+export const token = process.env.REACT_APP_TOKEN
