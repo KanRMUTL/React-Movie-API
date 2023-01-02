@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { backdropUrl } from "../../constance/service";
-import { Movie, MovieDetail, MovieTypes } from "../../type/movie";
-import MovieClass from "../classes/Movie";
+import { Movie, MovieDetail, MovieTypes } from "../../utils/types/movie";
+import MovieClass from "../../utils/classes/Movie";
 interface MovieStore {
   currentType: MovieTypes;
   list: Movie[];

@@ -1,4 +1,4 @@
-import { MovieDetail, MovieResponse } from "../../type/movie";
+import { MovieDetail, MovieResponse } from "../types/movie";
 import { client } from "../services/client";
 
 export default class Movie {

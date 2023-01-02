@@ -1,23 +1,22 @@
 import React, { useEffect } from "react";
-import type { RootState } from "../../../app/store";
+import { RootState, useAppDispatch } from "../../../store/store";
 import { useSelector } from "react-redux";
 import { Box, Grid, Typography } from "@mui/material";
 
-import { fetchMovieDetail } from "../../../app/slices/movieSlice";
-import { store } from "../../../app/store";
-
+import { fetchMovieDetail } from "../../../store/slices/movieSlice";
 import BackDrop from "../../utils/BackDrop";
 import { useMatches } from "react-router-dom";
 
 function MovieDetail() {
   const movie = useSelector((state: RootState) => state.movie);
   const [match] = useMatches();
+  const dispatch = useAppDispatch()
 
   useEffect(() => fetchData(), []);
 
   const fetchData = () => {
     const id = Number(match.params.id);
-    store.dispatch(fetchMovieDetail(id));
+    dispatch(fetchMovieDetail(id));
   };
 
   return (

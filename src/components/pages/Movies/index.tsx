@@ -1,17 +1,12 @@
 import React, { ChangeEvent, useEffect } from "react";
 import MediaCard from "../../utils/MediaCard";
-import type { RootState } from "../../../app/store";
-import { useDispatch, useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../../store/store";
+import { useSelector } from "react-redux";
 import { Box, Grid } from "@mui/material";
 import uniqid from "uniqid";
-import {
-  fetchMovieDetail,
-  fetchMovieList,
-  setMovieType,
-} from "../../../app/slices/movieSlice";
-import { store } from "../../../app/store";
+import { fetchMovieList, setMovieType } from "../../../store/slices/movieSlice";
 import RowRadioButtonsGroup from "../../utils/RadioGroup";
-import { Movie, MovieTypes } from "../../../type/movie";
+import { MovieTypes } from "../../../utils/types/movie";
 import BackDrop from "../../utils/BackDrop";
 import { useNavigate } from "react-router-dom";
 
@@ -24,18 +19,18 @@ const menu = [
 
 function Movies() {
   const movie = useSelector((state: RootState) => state.movie);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => fetchData(), []);
 
   const fetchData = () => {
-    store.dispatch(fetchMovieList(movie.currentType));
+    dispatch(fetchMovieList(movie.currentType));
   };
 
   const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch(setMovieType(e.target.value));
-    store.dispatch(fetchMovieList(e.target.value as MovieTypes));
+    dispatch(fetchMovieList(e.target.value as MovieTypes));
   };
 
   const handleClickMovie = (id: number) => navigate(`${id}`);
@@ -48,12 +43,7 @@ function Movies() {
         label="Type"
         menu={menu}
       />
-      <Grid
-        container
-        direction="row"
-        justifyContent="center"
-        spacing={2}
-      >
+      <Grid container direction="row" justifyContent="center" spacing={2}>
         {movie.list.map(({ id, name, imageUrl, description }) => (
           <Grid item key={uniqid()} style={{ cursor: "pointer" }}>
             <MediaCard
