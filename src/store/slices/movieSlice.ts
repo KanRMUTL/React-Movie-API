@@ -25,6 +25,14 @@ export const fetchMovieDetail = createAsyncThunk(
   }
 );
 
+export const fetchMovieByKeyword = createAsyncThunk(
+  "movie/search",
+  async (keyword: string) => {
+    const movie = new MovieClass("search/movie");
+    return movie.search(keyword);
+  }
+);
+
 const initialState: MovieStore = {
   currentType: MovieTypes.top_rated,
   list: [],
@@ -41,6 +49,7 @@ const movieListSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Fetch movie list
     builder.addCase(fetchMovieList.pending, (movie, action) => {
       movie.list = [];
       movie.loading = true;
@@ -62,6 +71,8 @@ const movieListSlice = createSlice({
       movie.list = [];
       movie.loading = false;
     });
+
+    // Fetch movie detail
     builder.addCase(fetchMovieDetail.pending, (movie, action) => {
       movie.selected = initialState.selected;
       movie.loading = true;
@@ -74,6 +85,29 @@ const movieListSlice = createSlice({
       movie.loading = false;
     });
     builder.addCase(fetchMovieDetail.rejected, (movie, action) => {
+      movie.list = [];
+      movie.loading = false;
+    });
+
+    // Fetch movie by keyword
+    builder.addCase(fetchMovieByKeyword.pending, (movie, action) => {
+      movie.list = [];
+      movie.loading = true;
+    });
+    builder.addCase(fetchMovieByKeyword.fulfilled, (movie, action) => {
+      action.payload.results.forEach(
+        ({ id, title, overview, backdrop_path }) => {
+          movie.list.push({
+            id,
+            name: title,
+            description: overview,
+            imageUrl: `${backdropUrl}/${backdrop_path}`,
+          });
+        }
+      );
+      movie.loading = false;
+    });
+    builder.addCase(fetchMovieByKeyword.rejected, (movie, action) => {
       movie.list = [];
       movie.loading = false;
     });

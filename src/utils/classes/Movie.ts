@@ -19,4 +19,13 @@ export default class Movie {
     const result = await client.get<MovieDetail>(url);
     return result.data;
   };
+
+  public search = async (keyword: string) => {
+    const result = await client.get<MovieResponse>(this.path, {
+      params: {
+        query: keyword,
+      },
+    });
+    return result.data;
+  };
 }
