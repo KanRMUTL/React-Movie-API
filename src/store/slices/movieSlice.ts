@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { backdropUrl } from "../../constance/service";
 import { Movie, MovieDetail, MovieTypes } from "../../utils/types/movie";
 import MovieClass from "../../utils/classes/Movie";
+import { RootState } from "../store";
 interface MovieStore {
   currentType: MovieTypes;
   list: Movie[];
@@ -55,16 +56,7 @@ const movieListSlice = createSlice({
       movie.loading = true;
     });
     builder.addCase(fetchMovieList.fulfilled, (movie, action) => {
-      action.payload.results.forEach(
-        ({ id, title, overview, backdrop_path }) => {
-          movie.list.push({
-            id,
-            name: title,
-            description: overview,
-            imageUrl: `${backdropUrl}/${backdrop_path}`,
-          });
-        }
-      );
+      movie.list = MovieClass.convertResponseToMovie(action.payload.results);
       movie.loading = false;
     });
     builder.addCase(fetchMovieList.rejected, (movie, action) => {
@@ -95,16 +87,7 @@ const movieListSlice = createSlice({
       movie.loading = true;
     });
     builder.addCase(fetchMovieByKeyword.fulfilled, (movie, action) => {
-      action.payload.results.forEach(
-        ({ id, title, overview, backdrop_path }) => {
-          movie.list.push({
-            id,
-            name: title,
-            description: overview,
-            imageUrl: `${backdropUrl}/${backdrop_path}`,
-          });
-        }
-      );
+      movie.list = MovieClass.convertResponseToMovie(action.payload.results);
       movie.loading = false;
     });
     builder.addCase(fetchMovieByKeyword.rejected, (movie, action) => {
@@ -115,5 +98,5 @@ const movieListSlice = createSlice({
 });
 
 export const { setMovieType } = movieListSlice.actions;
-
+export const movieSelector = (state: RootState) => state.movie;
 export default movieListSlice.reducer;

@@ -1,5 +1,6 @@
-import { MovieDetail, MovieResponse } from "../types/movie";
+import { MovieDetail, MovieResponse, MovieResult } from "../types/movie";
 import { client } from "../services/client";
+import { backdropUrl } from "../../constance/service";
 
 export default class Movie {
   private path: string;
@@ -27,5 +28,14 @@ export default class Movie {
       },
     });
     return result.data;
+  };
+
+  public static convertResponseToMovie = (movieResponse: MovieResult[]) => {
+    return movieResponse.map(({ id, title, overview, backdrop_path }) => ({
+      id,
+      name: title,
+      description: overview,
+      imageUrl: `${backdropUrl}/${backdrop_path}`,
+    }));
   };
 }
