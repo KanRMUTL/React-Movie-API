@@ -9,9 +9,9 @@ export default class Movie {
     this.path = path;
   }
 
-  public getList = async (type: string) => {
+  public getList = async (type: string, page: number) => {
     const url = `/${this.path}/${type}`;
-    const result = await client.get<MovieResponse>(url);
+    const result = await client.get<MovieResponse>(url, { params: { page } });
     return result.data;
   };
 
@@ -21,10 +21,11 @@ export default class Movie {
     return result.data;
   };
 
-  public search = async (keyword: string) => {
+  public search = async (keyword: string, page: number) => {
     const result = await client.get<MovieResponse>(this.path, {
       params: {
         query: keyword,
+        page,
       },
     });
     return result.data;

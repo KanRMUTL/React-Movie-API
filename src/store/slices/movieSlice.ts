@@ -6,15 +6,22 @@ import { RootState } from "../store";
 interface MovieStore {
   currentType: MovieTypes;
   list: Movie[];
+  page: number;
+  totalPages: number;
   selected: MovieDetail;
   loading: boolean;
 }
 
+interface FetchMovieListProp {
+  type: MovieTypes;
+  page: number;
+}
+
 export const fetchMovieList = createAsyncThunk(
   "movie/getList",
-  async (type: MovieTypes) => {
+  async ({ type, page }: FetchMovieListProp) => {
     const movie = new MovieClass("movie");
-    return movie.getList(type);
+    return movie.getList(type, page);
   }
 );
 
@@ -26,17 +33,24 @@ export const fetchMovieDetail = createAsyncThunk(
   }
 );
 
+interface FetchMovieByKeywordProps {
+  keyword: string;
+  page: number;
+}
+
 export const fetchMovieByKeyword = createAsyncThunk(
   "movie/search",
-  async (keyword: string) => {
+  async ({ keyword, page }: FetchMovieByKeywordProps) => {
     const movie = new MovieClass("search/movie");
-    return movie.search(keyword);
+    return movie.search(keyword, page);
   }
 );
 
 const initialState: MovieStore = {
   currentType: MovieTypes.top_rated,
   list: [],
+  page: 1,
+  totalPages: 1,
   selected: {} as MovieDetail,
   loading: false,
 };
@@ -48,6 +62,9 @@ const movieListSlice = createSlice({
     setMovieType: (movie, { payload }) => {
       movie.currentType = payload;
     },
+    setPage: (movie, { payload }) => {
+      movie.page = payload;
+    },
   },
   extraReducers: (builder) => {
     // Fetch movie list
@@ -58,6 +75,7 @@ const movieListSlice = createSlice({
     builder.addCase(fetchMovieList.fulfilled, (movie, action) => {
       movie.list = MovieClass.convertResponseToMovie(action.payload.results);
       movie.loading = false;
+      movie.totalPages = action.payload.total_pages;
     });
     builder.addCase(fetchMovieList.rejected, (movie, action) => {
       movie.list = [];
@@ -89,6 +107,7 @@ const movieListSlice = createSlice({
     builder.addCase(fetchMovieByKeyword.fulfilled, (movie, action) => {
       movie.list = MovieClass.convertResponseToMovie(action.payload.results);
       movie.loading = false;
+      movie.totalPages = action.payload.total_pages
     });
     builder.addCase(fetchMovieByKeyword.rejected, (movie, action) => {
       movie.list = [];
@@ -97,6 +116,6 @@ const movieListSlice = createSlice({
   },
 });
 
-export const { setMovieType } = movieListSlice.actions;
+export const { setMovieType, setPage } = movieListSlice.actions;
 export const movieSelector = (state: RootState) => state.movie;
 export default movieListSlice.reducer;

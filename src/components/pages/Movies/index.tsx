@@ -2,13 +2,14 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import MediaCard from "../../utils/MediaCard";
 import { useAppDispatch } from "../../../store/store";
 import { useSelector } from "react-redux";
-import { Box, Grid, TextField } from "@mui/material";
+import { Box, Grid, Pagination, TextField } from "@mui/material";
 import uniqid from "uniqid";
 import {
   fetchMovieByKeyword,
   fetchMovieList,
   movieSelector,
   setMovieType,
+  setPage,
 } from "../../../store/slices/movieSlice";
 import RowRadioButtonsGroup from "../../utils/RadioGroup";
 import { MovieTypes } from "../../../utils/types/movie";
@@ -34,17 +35,19 @@ const Movies = () => {
 
   useEffect(() => {
     if (keywordDebounce) {
-      dispatch(fetchMovieByKeyword(keywordDebounce));
+      dispatch(fetchMovieByKeyword({ keyword: keywordDebounce, page: 1 }));
+      dispatch(setPage(1));
     }
   }, [keywordDebounce]);
 
   const fetchData = () => {
-    dispatch(fetchMovieList(movie.currentType));
+    dispatch(fetchMovieList({ type: movie.currentType, page: 1 }));
   };
 
   const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch(setMovieType(e.target.value));
-    dispatch(fetchMovieList(e.target.value as MovieTypes));
+    dispatch(fetchMovieList({ type: e.target.value as MovieTypes, page: 1 }));
+    dispatch(setPage(1));
     setKeyword("");
     setKeywordDebounce("");
   };
@@ -54,12 +57,24 @@ const Movies = () => {
     setKeywordDebounce(e.target.value);
   };
 
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    dispatch(setPage(page));
+    if (keyword) {
+      dispatch(fetchMovieByKeyword({ keyword: keywordDebounce, page }));
+    } else {
+      dispatch(fetchMovieList({ type: movie.currentType, page: page }));
+    }
+  };
+
   const handleClickMovie = (id: number) => navigate(`${id}`);
 
   return (
     <Box>
       <Grid container direction="row" justifyItems="center" spacing={3}>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <TextField
             fullWidth
             label="Search"
@@ -73,6 +88,15 @@ const Movies = () => {
             selectedValue={movie.currentType}
             label="Type"
             menu={menu}
+          />
+        </Grid>
+        <Grid item mb={3}>
+          <Pagination
+            page={movie.page}
+            count={movie.totalPages}
+            variant="outlined"
+            shape="rounded"
+            onChange={handlePageChange}
           />
         </Grid>
       </Grid>
